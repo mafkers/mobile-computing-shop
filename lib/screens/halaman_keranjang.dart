@@ -1,57 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../blocs/cart_bloc.dart';
+import '../blocs/blok_keranjang.dart';
 
-class CartPage extends StatelessWidget {
+class HalamanKeranjang extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Cart'),
+        title: const Text('Keranjang Belanja'),
         actions: [
+          // Tombol sapu untuk membuang semua isi keranjang
           IconButton(
             icon: const Icon(Icons.delete_sweep),
             onPressed: () {
-              context.read<CartBloc>().add(ClearCartEvent());
+              context.read<BlokKeranjang>().add(KosongkanKeranjangEvent());
             },
           )
         ],
       ),
-      body: BlocBuilder<CartBloc, CartState>(
+      body: BlocBuilder<BlokKeranjang, StateKeranjang>(
         builder: (context, state) {
-          if (state is CartLoading) {
+          if (state is KeranjangSedangMemuat) {
             return const Center(child: CircularProgressIndicator());
-          } else if (state is CartError) {
-            return Center(child: Text(state.message));
-          } else if (state is CartLoaded) {
-            if (state.items.isEmpty) {
-              return const Center(child: Text('Your cart is empty.'));
+          } else if (state is KeranjangGagalDimuat) {
+            return Center(child: Text(state.pesanPeringatan));
+          } else if (state is KeranjangBerhasilDimuat) {
+            // Jika tidak ada barang yang mau dibeli
+            if (state.daftarItem.isEmpty) {
+              return const Center(child: Text('Keranjang Anda kosong. Ayo belanja!'));
             }
+            
             return Column(
               children: [
                 Expanded(
                   child: ListView.builder(
-                    itemCount: state.items.length,
+                    itemCount: state.daftarItem.length,
                     itemBuilder: (context, index) {
-                      final item = state.items[index];
+                      final item = state.daftarItem[index];
                       return ListTile(
                         leading: CachedNetworkImage(
-                          imageUrl: item.product.image,
+                          imageUrl: item.produk.gambar,
                           width: 50,
                         ),
-                        title: Text(item.product.title, maxLines: 1),
-                        subtitle: Text('\$${item.product.price} x ${item.quantity}'),
+                        title: Text(item.produk.judul, maxLines: 1),
+                        subtitle: Text('\$${item.produk.harga} x ${item.jumlah} buah'),
                         trailing: IconButton(
                           icon: const Icon(Icons.remove_circle, color: Colors.red),
                           onPressed: () {
-                            context.read<CartBloc>().add(RemoveFromCartEvent(item.product.id));
+                            // Event untuk menghapus 1 baris barang ini dari keranjang
+                            context.read<BlokKeranjang>().add(HapusDariKeranjangEvent(item.produk.id));
                           },
                         ),
                       );
                     },
                   ),
                 ),
+                // Bagian bawah (Footer) untuk kalkulasi total harga dan tombol Checkout
                 Container(
                   padding: const EdgeInsets.all(20),
                   color: Colors.grey[200],
@@ -61,8 +66,11 @@ class CartPage extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Total:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                          Text('\$${state.totalPrice.toStringAsFixed(2)}', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green)),
+                          const Text('Total Tagihan:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          Text(
+                            '\$${state.totalHarga.toStringAsFixed(2)}', 
+                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green)
+                          ),
                         ],
                       ),
                       ElevatedButton(
@@ -71,10 +79,12 @@ class CartPage extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                         ),
                         onPressed: () {
-                          context.read<CartBloc>().add(ClearCartEvent());
+                          // Karena ini simulasi, checkout hanya menghapus data keranjang
+                          context.read<BlokKeranjang>().add(KosongkanKeranjangEvent());
+                          
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Checkout Successful!'),
+                              content: Text('Pembayaran Sukses! Terima kasih.'),
                               backgroundColor: Colors.green,
                               duration: Duration(seconds: 2),
                             ),
@@ -88,7 +98,7 @@ class CartPage extends StatelessWidget {
               ],
             );
           }
-          return const Center(child: Text('Unknown State'));
+          return const Center(child: Text('Kondisi tidak diketahui'));
         },
       ),
     );

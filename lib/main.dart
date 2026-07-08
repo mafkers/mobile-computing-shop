@@ -1,42 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'repositories/product_repository.dart';
-import 'blocs/product_bloc.dart';
-import 'blocs/cart_bloc.dart';
-import 'blocs/favorite_bloc.dart';
-import 'screens/home_page.dart';
+
+import 'repositories/repositori_produk.dart';
+import 'blocs/blok_produk.dart';
+import 'blocs/blok_keranjang.dart';
+import 'blocs/blok_favorit.dart';
+import 'screens/halaman_utama.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const AplikasiTokoPintar());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class AplikasiTokoPintar extends StatelessWidget {
+  const AplikasiTokoPintar({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Provide a single instance of the repository
-    final ProductRepository productRepository = ProductRepository();
+    // Menyediakan satu instansiasi Repositori untuk dipakai bersama-sama
+    final RepositoriProduk repositoriProduk = RepositoriProduk();
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider<ProductBloc>(
-          create: (context) => ProductBloc(productRepository)..add(FetchProductsEvent()),
+        // BLoC untuk mengurus daftar produk. Saat dibentuk, otomatis menembak Event AmbilSemuaProduk
+        BlocProvider<BlokProduk>(
+          create: (context) => BlokProduk(repositoriProduk)..add(AmbilSemuaProdukEvent()),
         ),
-        BlocProvider<CartBloc>(
-          create: (context) => CartBloc()..add(LoadCartEvent()),
+        // BLoC untuk mengurus keranjang belanja. Saat dibentuk, otomatis menembak Event MuatKeranjang
+        BlocProvider<BlokKeranjang>(
+          create: (context) => BlokKeranjang()..add(MuatKeranjangEvent()),
         ),
-        BlocProvider<FavoriteBloc>(
-          create: (context) => FavoriteBloc()..add(LoadFavoritesEvent()),
+        // BLoC untuk mengurus daftar favorit. Saat dibentuk, otomatis menembak Event MuatFavorit
+        BlocProvider<BlokFavorit>(
+          create: (context) => BlokFavorit()..add(MuatFavoritEvent()),
         ),
       ],
       child: MaterialApp(
-        title: 'ShopSavvy',
+        title: 'Toko Pintar (ShopSavvy)',
         theme: ThemeData(
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: HomePage(),
+        home: HalamanUtama(),
       ),
     );
   }
