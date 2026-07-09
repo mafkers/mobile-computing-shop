@@ -72,6 +72,18 @@ class HalamanDetail extends StatelessWidget {
                     '\$${produk.harga}',
                     style: const TextStyle(fontSize: 20, color: Colors.green, fontWeight: FontWeight.bold),
                   ),
+                  const SizedBox(height: 10),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      produk.kategori.toUpperCase(),
+                      style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+                    ),
+                  ),
                   const SizedBox(height: 20),
                   const Text('Deskripsi Produk', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 10),
@@ -79,20 +91,29 @@ class HalamanDetail extends StatelessWidget {
                   const SizedBox(height: 30),
                   
                   // Tombol Lebar Penuh (Full Width) untuk Tambah ke Keranjang
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton.icon(
-                      icon: const Icon(Icons.add_shopping_cart),
-                      label: const Text('Tambah ke Keranjang'),
-                      onPressed: () {
-                        // Tembakkan event untuk memasukkan produk ini ke database keranjang
-                        context.read<BlokKeranjang>().add(TambahKeKeranjangEvent(produk));
-                        
+                  BlocListener<BlokKeranjang, StateKeranjang>(
+                    listener: (context, state) {
+                      if (state is KeranjangBerhasilDimuat) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Berhasil ditambahkan ke Keranjang!')),
+                          const SnackBar(content: Text('Berhasil ditambahkan ke Keranjang!'), backgroundColor: Colors.green),
                         );
-                      },
+                      } else if (state is KeranjangGagalDimuat) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(state.pesanPeringatan), backgroundColor: Colors.red),
+                        );
+                      }
+                    },
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton.icon(
+                        icon: const Icon(Icons.add_shopping_cart),
+                        label: const Text('Tambah ke Keranjang'),
+                        onPressed: () {
+                          // Tembakkan event ke BLoC (Notifikasi akan dihandle oleh BlocListener di atas)
+                          context.read<BlokKeranjang>().add(TambahKeKeranjangEvent(produk));
+                        },
+                      ),
                     ),
                   )
                 ],

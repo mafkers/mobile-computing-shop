@@ -98,6 +98,26 @@ class _HalamanUtamaState extends State<HalamanUtama> {
             ),
           ),
           
+          // Filter Kategori
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: Row(
+              children: [
+                _buatTombolKategori(context, 'Semua', ''),
+                const SizedBox(width: 8),
+                _buatTombolKategori(context, 'Electronics', 'electronics'),
+                const SizedBox(width: 8),
+                _buatTombolKategori(context, 'Jewelery', 'jewelery'),
+                const SizedBox(width: 8),
+                _buatTombolKategori(context, 'Men\'s Clothing', "men's clothing"),
+                const SizedBox(width: 8),
+                _buatTombolKategori(context, 'Women\'s Clothing', "women's clothing"),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+
           // Daftar Produk
           Expanded(
             child: RefreshIndicator(
@@ -203,6 +223,20 @@ class _HalamanUtamaState extends State<HalamanUtama> {
           ],
         ),
       ),
+    );
+  }
+
+  // Fungsi bantuan untuk membuat tombol filter kategori
+  Widget _buatTombolKategori(BuildContext context, String label, String kategoriApi) {
+    return ActionChip(
+      label: Text(label),
+      onPressed: () {
+        if (kategoriApi.isEmpty) {
+          context.read<BlokProduk>().add(AmbilSemuaProdukEvent());
+        } else {
+          context.read<BlokProduk>().add(AmbilProdukBerdasarkanKategoriEvent(kategoriApi));
+        }
+      },
     );
   }
 }

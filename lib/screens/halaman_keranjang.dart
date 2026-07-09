@@ -57,44 +57,65 @@ class HalamanKeranjang extends StatelessWidget {
                   ),
                 ),
                 // Bagian bawah (Footer) untuk kalkulasi total harga dan tombol Checkout
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  color: Colors.grey[200],
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text('Total Tagihan:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                          Text(
-                            '\$${state.totalHarga.toStringAsFixed(2)}', 
-                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green)
-                          ),
-                        ],
-                      ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                        ),
-                        onPressed: () {
-                          // Karena ini simulasi, checkout hanya menghapus data keranjang
-                          context.read<BlokKeranjang>().add(KosongkanKeranjangEvent());
-                          
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Pembayaran Sukses! Terima kasih.'),
-                              backgroundColor: Colors.green,
-                              duration: Duration(seconds: 2),
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    color: Colors.grey[200],
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('Total Tagihan:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                            Text(
+                              '\$${state.totalHarga.toStringAsFixed(2)}', 
+                              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green)
                             ),
-                          );
-                        },
-                        child: const Text('Checkout', style: TextStyle(color: Colors.white, fontSize: 16)),
-                      ),
-                    ],
-                  ),
-                )
+                          ],
+                        ),
+                        const SizedBox(height: 15),
+                        // Tombol Checkout
+                        BlocListener<BlokKeranjang, StateKeranjang>(
+                          listenWhen: (previous, current) {
+                            if (previous is KeranjangBerhasilDimuat && current is KeranjangBerhasilDimuat) {
+                              return previous.daftarItem.isNotEmpty && current.daftarItem.isEmpty;
+                            }
+                            return current is KeranjangGagalDimuat;
+                          },
+                          listener: (context, state) {
+                            if (state is KeranjangBerhasilDimuat && state.daftarItem.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Pembayaran Sukses! Terima kasih.'),
+                                  backgroundColor: Colors.green,
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
+                            } else if (state is KeranjangGagalDimuat) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(state.pesanPeringatan), backgroundColor: Colors.red),
+                              );
+                            }
+                          },
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                padding: const EdgeInsets.symmetric(vertical: 15),
+                              ),
+                              onPressed: () {
+                                context.read<BlokKeranjang>().add(KosongkanKeranjangEvent());
+                              },
+                              child: const Text(
+                                'Checkout Sekarang',
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
               ],
             );
           }
