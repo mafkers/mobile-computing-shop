@@ -44,6 +44,9 @@ class KeranjangBerhasilDimuat extends StateKeranjang {
   final List<ItemKeranjang> daftarItem;
   const KeranjangBerhasilDimuat(this.daftarItem);
   
+  // Menghitung total barang di keranjang
+  int get totalBarang => daftarItem.fold(0, (total, itemLancar) => total + itemLancar.jumlah);
+  
   // Menghitung total tagihan belanjaan secara otomatis
   double get totalHarga => daftarItem.fold(0, (total, itemLancar) => total + (itemLancar.produk.harga * itemLancar.jumlah));
   

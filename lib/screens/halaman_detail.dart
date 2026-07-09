@@ -24,7 +24,7 @@ class HalamanDetail extends StatelessWidget {
               bool apakahFavorit = false;
               // Jika berhasil dimuat, kita cari apakah produk ini ada di dalam daftar favorit
               if (state is FavoritBerhasilDimuat) {
-                apakahFavorit = state.daftarFavorit.any((p) => p.id == produk.id);
+                apakahFavorit = state.cekApakahFavorit(produk.id);
               }
               
               return IconButton(

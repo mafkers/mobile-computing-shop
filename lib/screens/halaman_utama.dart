@@ -42,7 +42,7 @@ class _HalamanUtamaState extends State<HalamanUtama> {
               int totalBarang = 0;
               // Jika data keranjang sukses dimuat, kita jumlahkan angka quantity-nya
               if (state is KeranjangBerhasilDimuat) {
-                totalBarang = state.daftarItem.fold(0, (total, item) => total + item.jumlah);
+                totalBarang = state.totalBarang;
               }
               
               return Stack(

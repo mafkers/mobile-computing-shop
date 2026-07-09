@@ -33,6 +33,10 @@ class FavoritSedangMemuat extends StateFavorit {}
 class FavoritBerhasilDimuat extends StateFavorit {
   final List<Produk> daftarFavorit;
   const FavoritBerhasilDimuat(this.daftarFavorit);
+  
+  // Memeriksa apakah suatu produk ada di daftar favorit
+  bool cekApakahFavorit(int idProduk) => daftarFavorit.any((p) => p.id == idProduk);
+  
   @override
   List<Object> get props => [daftarFavorit];
 }
