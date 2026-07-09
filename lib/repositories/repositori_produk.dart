@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../models/produk.dart';
@@ -28,12 +29,12 @@ class RepositoriProduk {
           return daftarProduk;
         }
       } catch (e) {
-        print("Terjadi kesalahan API: $e");
+        debugPrint("Terjadi kesalahan API: $e");
       }
     }
     
     // Jika internet mati atau API error, ambil data cadangan dari SQLite lokal
-    print("Mengambil data dari Penyimpanan Lokal...");
+    debugPrint("Mengambil data dari Penyimpanan Lokal...");
     return await BantuanDatabase.instance.ambilProdukDariCache();
   }
 
@@ -48,7 +49,7 @@ class RepositoriProduk {
           return dataJson.map((json) => Produk.dariJson(json)).toList();
         }
       } catch (e) {
-        print("Terjadi kesalahan API: $e");
+        debugPrint("Terjadi kesalahan API: $e");
       }
     }
     

@@ -12,7 +12,7 @@ void main() {
 }
 
 class AplikasiTokoPintar extends StatelessWidget {
-  const AplikasiTokoPintar({Key? key}) : super(key: key);
+  const AplikasiTokoPintar({super.key});
 
   @override
   Widget build(BuildContext context) {

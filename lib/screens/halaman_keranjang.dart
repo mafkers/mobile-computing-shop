@@ -4,6 +4,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../blocs/blok_keranjang.dart';
 
 class HalamanKeranjang extends StatelessWidget {
+  const HalamanKeranjang({super.key});
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(

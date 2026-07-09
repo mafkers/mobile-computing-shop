@@ -6,6 +6,8 @@ import '../blocs/blok_favorit.dart';
 import 'halaman_detail.dart';
 
 class HalamanFavorit extends StatelessWidget {
+  const HalamanFavorit({super.key});
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(

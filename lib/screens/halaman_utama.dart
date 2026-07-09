@@ -10,8 +10,10 @@ import 'halaman_keranjang.dart';
 import 'halaman_favorit.dart';
 
 class HalamanUtama extends StatefulWidget {
+  const HalamanUtama({super.key});
+
   @override
-  _HalamanUtamaState createState() => _HalamanUtamaState();
+  State<HalamanUtama> createState() => _HalamanUtamaState();
 }
 
 class _HalamanUtamaState extends State<HalamanUtama> {

@@ -10,7 +10,7 @@ class HalamanDetail extends StatelessWidget {
   final Produk produk;
 
   // Halaman ini butuh data 'produk' saat dipanggil (sebagai parameter)
-  const HalamanDetail({Key? key, required this.produk}) : super(key: key);
+  const HalamanDetail({super.key, required this.produk});
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +76,7 @@ class HalamanDetail extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(0.1),
+                      color: Colors.blue.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
